@@ -6,7 +6,7 @@ import sys
 from functools import wraps
 
 import requests
-from github import Github
+from github import Github , Auth
 
 
 user_agents_file_name = 'user-agents.json'
@@ -166,17 +166,17 @@ def get_latest_user_agents():
 
 @with_cli_status('Updating files on GitHub')
 def update_files_on_github(new_user_agents_json):
-    gh = Github(os.environ['GITHUB_TOKEN'])
+    gh = Github(auth=Auth.Token(os.environ['GITHUB_TOKEN']))
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
-    for branch in ('main', 'gh-pages'):
-        f = repo.get_contents(user_agents_file_name, ref=branch)
-        repo.update_file(
-            f.path,
-            message=f'Update {user_agents_file_name} on {branch} branch',
-            content=new_user_agents_json,
-            sha=f.sha,
-            branch=branch,
-        )
+    branch = "main"
+    f = repo.get_contents(user_agents_file_name, ref=branch)
+    repo.update_file(
+        f.path,
+        message=f'Update {user_agents_file_name} on {branch} branch',
+        content=new_user_agents_json,
+        sha=f.sha,
+        branch=branch,
+    )
 
 
 if __name__ == '__main__':
