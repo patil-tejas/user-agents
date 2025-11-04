@@ -5,6 +5,10 @@ on:
       - main
   schedule:
     - cron:  '0 0 * * *'
+
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Update latest user agents
